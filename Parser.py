@@ -21,12 +21,13 @@ class TSPInstance:
     def readSpecs(self):
         specsSection = []
         self.curLine = self.rawData.readline().rstrip()
-        while(not (self.curLine in self.dataKeywords)):
+        while (not (self.curLine in self.dataKeywords)):
             specsSection.append(self.curLine)
             self.curLine = self.rawData.readline().rstrip()
         strippedSpecSection = [lin.split(': ') for lin in specsSection]
         for i in range(len(strippedSpecSection)):
             setattr(self, strippedSpecSection[i][0], strippedSpecSection[i][1])
+
 
     def readData(self):
         if(self.curLine == "EDGE_WEIGHT_SECTION"):
