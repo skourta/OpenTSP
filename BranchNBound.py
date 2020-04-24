@@ -24,13 +24,16 @@ def reduce_matrix(data):
 
 def getNextNode(fullNode, visited, active, start, nodeSuiv, size):
     # recuperer les donnes a utiliser
+
     data = fullNode[1]['matrix']
     node = fullNode[1]['node']
     cost = fullNode[1]['cost']
     parentLevel = fullNode[1]['level']
+
     for i in range(0, data.shape[0]):
+        nodeVisited = list.copy(fullNode[1]['visited'])
         # Verifier que l'on a pas deja visite ce noeud
-        if (not (i in visited)):
+        if not (i in nodeVisited):
             # Faire une copie de la matrice d'evalution
             temp = np.copy(data)
             # Mettre la ligne du noeud parent a ∞
@@ -43,27 +46,35 @@ def getNextNode(fullNode, visited, active, start, nodeSuiv, size):
             # print(node,i,"\n", temp)
             childReduced, childCost = reduce_matrix(temp)
             # Calculer l'evaluation du noeud fils
-            print(node, i, cost, data[node, i], childCost, "\n")
+            # print(node, i, cost, data[node, i], childCost, "\n")
             childCost += data[node, i] + cost
             # Ajouter le noeud fils a la liste des noeuds actifs
+            nodeVisited.append(i)
             active.append(
-                (nodeSuiv, {'node': i, 'cost': childCost, 'level': parentLevel + 1, 'matrix': np.copy(childReduced)}))
+                (nodeSuiv, {'node': i, 'cost': childCost, 'level': parentLevel + 1,'visited': nodeVisited, 'matrix': np.copy(childReduced)}))
             nodeSuiv += 1
     # Recuperer les couts des neouds actifs pour calculer le cout minimum
     seq = [x[1]['cost'] for x in active]
     # Recuperer le minimum des couts
     minim = min(seq)
     index = -1
-    if len(active) > size - 1:
-        # Recuperer l'index du noeud le plus profond ayant le cout minimal
-        for j in range(len(seq) - 1, 0, -1):
-            if seq[j] == minim:
-                index = j
-                break
-    else:
-        index = seq.index(minim)
+    # if len(active) > size - 1:
+    #     # Recuperer l'index du noeud le plus profond ayant le cout minimal
+    #     for j in range(len(seq) - 1, 0, -1):
+    #         if seq[j] == minim:
+    #             index = j
+    #             break
+    # else:
+    index = seq.index(minim)
     # Supprimer le neoud choisi de la liste des noeuds actifs et retourner ce noeud avec son cout et ca matrice reduite
-    return active.pop(index), nodeSuiv
+    nextNode = active.pop(index)
+    # while len(visited) >= nextNode[1]['level'] + 1:
+    #     visited.pop()
+    if len(nextNode[1]['visited']) == size:
+        for x in range(len(active) - 1, -1, -1):
+            if active[x][1]['cost'] > nextNode[1]['cost']:
+                active.pop(x)
+    return nextNode, nodeSuiv
 
 
 def branchNbound(start, data):
@@ -81,19 +92,20 @@ def branchNbound(start, data):
     # Ajouter la racine a la liste des noeuds visites
     visited.append(root)
     # Creer un noeud actif
-    nextNode = (nodeSuiv, {'node': start, 'cost': cost, 'level': 0,
+    nextNode = (nodeSuiv, {'node': start, 'cost': cost, 'level': 0, 'visited': [start],
                            'matrix': np.copy(reduced)})
     nodeSuiv += 1
     # Recuperer le prochain noeud a exploiter
     nextNode, nodeSuiv = getNextNode(
         nextNode, visited, active, start, nodeSuiv, data.shape[0])
     # Continuer a recuperer le prochain noeud actif tant que l'on a pas visite tous les noeuds
-    while (len(visited) < data.shape[0]):
+    while (len(active) > 0):
         # Ajouter le noeud choisi a la liste des noeuds visites
         visited.append(nextNode[1]['node'])
         # Recuperer le prochain noeud a exploiter
         nextNode, nodeSuiv = getNextNode(
             nextNode, visited, active, start, nodeSuiv, data.shape[0])
+    visited = np.copy(nextNode[1]['visited'])
     # calculer le cout de la solution trouvee
     summ = 0
     for i in range(len(visited) - 1):
