@@ -24,12 +24,10 @@ def reduce_matrix(data):
 
 def getNextNode(fullNode, visited, active, start, nodeSuiv, size):
     # recuperer les donnes a utiliser
-
     data = fullNode[1]['matrix']
     node = fullNode[1]['node']
     cost = fullNode[1]['cost']
     parentLevel = fullNode[1]['level']
-
     for i in range(0, data.shape[0]):
         nodeVisited = list.copy(fullNode[1]['visited'])
         # Verifier que l'on a pas deja visite ce noeud
@@ -43,33 +41,25 @@ def getNextNode(fullNode, visited, active, start, nodeSuiv, size):
             # Mettre le poid du noeud parent au fils a ∞ pour ne pas revenir au parent
             temp[i, start] = np.inf
             # Faire la reduction de la matrice en sauvgaredant la matrice reduite et la sommes des poids reduits
-            # print(node,i,"\n", temp)
             childReduced, childCost = reduce_matrix(temp)
             # Calculer l'evaluation du noeud fils
-            # print(node, i, cost, data[node, i], childCost, "\n")
             childCost += data[node, i] + cost
-            # Ajouter le noeud fils a la liste des noeuds actifs
+            # Ajouter le noeud fils a la liste des noeuds visites
             nodeVisited.append(i)
+            # Ajouter le noeud fils a la liste des noeuds actifs
             active.append(
-                (nodeSuiv, {'node': i, 'cost': childCost, 'level': parentLevel + 1,'visited': nodeVisited, 'matrix': np.copy(childReduced)}))
+                (nodeSuiv, {'node': i, 'cost': childCost, 'level': parentLevel + 1, 'visited': nodeVisited, 'matrix': np.copy(childReduced)}))
             nodeSuiv += 1
     # Recuperer les couts des neouds actifs pour calculer le cout minimum
     seq = [x[1]['cost'] for x in active]
     # Recuperer le minimum des couts
     minim = min(seq)
     index = -1
-    # if len(active) > size - 1:
-    #     # Recuperer l'index du noeud le plus profond ayant le cout minimal
-    #     for j in range(len(seq) - 1, 0, -1):
-    #         if seq[j] == minim:
-    #             index = j
-    #             break
-    # else:
+    # Recuperer l'index du noeud avec la borne inf la plus petite
     index = seq.index(minim)
     # Supprimer le neoud choisi de la liste des noeuds actifs et retourner ce noeud avec son cout et ca matrice reduite
     nextNode = active.pop(index)
-    # while len(visited) >= nextNode[1]['level'] + 1:
-    #     visited.pop()
+    # Si on trouve une solution condidate on elage tous les neouds ayant une borne inf > a cette solution
     if len(nextNode[1]['visited']) == size:
         for x in range(len(active) - 1, -1, -1):
             if active[x][1]['cost'] > nextNode[1]['cost']:
