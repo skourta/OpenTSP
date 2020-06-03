@@ -1,18 +1,8 @@
 import numpy as np
-
-import math
 import random
-from matplotlib import pyplot as plt
 
 
 class AC:
-    class Edge:
-        def __init__(self, a, b, weight, initial_pheromone):
-            self.a = a
-            self.b = b
-            self.weight = weight
-            self.pheromone = initial_pheromone
-
     class Ant:
         def __init__(self, alpha, beta, weights, pherom):
             self.alpha = alpha
@@ -27,11 +17,12 @@ class AC:
             unvisited_nodes = [node for node in range(self.num_nodes) if node not in self.tour]
             rowWeights = self.weights[self.tour[-1]][unvisited_nodes]
             rowPheroms = self.pheroms[self.tour[-1]][unvisited_nodes]
-            tauIetaI = [(rowPheroms[i]**self.alpha)*((1/rowWeights[i])**self.beta) for i in range(len(unvisited_nodes))]
+            tauIetaI = [(rowPheroms[i] ** self.alpha) * ((1 / rowWeights[i]) ** self.beta) for i in
+                        range(len(unvisited_nodes))]
             roulette_wheel = np.sum(tauIetaI)
             random_value = random.random()
             for i, unvisited_node in enumerate(unvisited_nodes):
-                random_value -= tauIetaI[i]/roulette_wheel
+                random_value -= tauIetaI[i] / roulette_wheel
                 if random_value <= 0:
                     return unvisited_node
 
@@ -47,7 +38,8 @@ class AC:
                 self.distance += self.weights[self.tour[i]][self.tour[(i + 1) % self.num_nodes]]
             return self.distance
 
-    def __init__(self, weights, mode='ACS', colony_size=10, elitist_weight=1.0, min_scaling_factor=0.001, alpha=1.0, beta=3.0,
+    def __init__(self, weights, mode='ACS', colony_size=10, elitist_weight=1.0, min_scaling_factor=0.001, alpha=1.0,
+                 beta=3.0,
                  rho=0.1, pheromone_deposit_weight=1.0, initial_pheromone=1.0, steps=100, nodes=None, labels=None):
         self.mode = mode
         self.colony_size = colony_size
@@ -132,37 +124,4 @@ class AC:
         else:
             self._max_min()
         print('Ended : {0}'.format(self.mode))
-        print('Sequence : <- {0} ->'.format(' - '.join(str(self.labels[i]) for i in self.global_best_tour)))
-        print('Total distance travelled to complete the tour : {0}\n'.format(round(self.global_best_distance, 2)))
-
-    def plot(self, line_width=1, point_radius=math.sqrt(2.0), annotation_size=8, dpi=120, save=True, name=None):
-        x = [self.nodes[i][0] for i in self.global_best_tour]
-        x.append(x[0])
-        y = [self.nodes[i][1] for i in self.global_best_tour]
-        y.append(y[0])
-        plt.plot(x, y, linewidth=line_width)
-        plt.scatter(x, y, s=math.pi * (point_radius ** 2.0))
-        plt.title(self.mode)
-        for i in self.global_best_tour:
-            plt.annotate(self.labels[i], self.nodes[i], size=annotation_size)
-        if save:
-            if name is None:
-                name = '{0}.png'.format(self.mode)
-            plt.savefig(name, dpi=dpi)
-        plt.show()
-        plt.gcf().clear()
-
-
-if __name__ == '__main__':
-    _colony_size = 5
-    _steps = 50
-    _nodes = [(random.uniform(-400, 400), random.uniform(-400, 400)) for _ in range(0, 15)]
-    acs = AC(mode='ACS', colony_size=_colony_size, steps=_steps, nodes=_nodes)
-    acs.run()
-    # acs.plot()
-    # elitist = AC(mode='Elitist', colony_size=_colony_size, steps=_steps, nodes=_nodes)
-    # elitist.run()
-    # elitist.plot()
-    # max_min = AC(mode='MaxMin', colony_size=_colony_size, steps=_steps, nodes=_nodes)
-    # max_min.run()
-    # max_min.plot()
+        print(self.global_best_tour, self.global_best_distance)
