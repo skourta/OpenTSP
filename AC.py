@@ -184,5 +184,4 @@ if __name__ == "__main__":
     instance.readData()
     ac = AC(np.array(instance.data), mode=args.mode, colony_size=int(args.colony_size), elitist_weight=float(args.elitist_weight), min_scaling_factor=float(args.min_scaling_factor), alpha=float(args.alpha),
             beta=float(args.beta), rho=float(args.rho), pheromone_deposit_weight=float(args.pheromone_deposit_weight), initial_pheromone=float(args.initial_pheromone), steps=int(args.steps), nodes=None, labels=None)
-    # ac = AC(np.array(instance.data))
     ac.run()
