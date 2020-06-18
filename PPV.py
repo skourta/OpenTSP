@@ -37,11 +37,16 @@ def PPV(graphe,v_depart=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
+    parser.add_argument("--start",
+                        help="Starting Node",)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
-    tour, cost = PPV(np.array(instance.data))
+    if args.start is not None:
+        tour, cost = PPV(np.array(instance.data),int(args.start))
+    else:
+        tour, cost = PPV(np.array(instance.data))
     end_time = time.time()
     print(tour)
     print(cost)
