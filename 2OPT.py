@@ -46,12 +46,15 @@ def solve_tsp_2opt(graphe, initial_tour=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
-    # parser.add_argument("--start",
-    #                     help="Starting Node",)
+    # parser.add_argument("--initial_tour",
+    #                     help="Initial Tour",)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
+    # if args.start is not None:
+    #     initial_tour, tour, init_coast, cost = solve_tsp_2opt(graphe=np.array(instance.data),)
+    # else:
     initial_tour, tour, init_coast, cost = solve_tsp_2opt(graphe=np.array(instance.data))
     end_time = time.time()
     print(tour)
