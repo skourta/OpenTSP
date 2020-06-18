@@ -4,6 +4,7 @@ import argparse
 import time
 from array import array as pyarray
 
+
 def restore_path(connections, endpoints):
     # Takes array of connections and returns a path.
 
@@ -129,13 +130,16 @@ def solve_tsp_glouton(distances, endpoints=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
-    # parser.add_argument("--start",
-    #                     help="Starting Node",)
+    parser.add_argument("--start",
+                        help="Starting Node", )
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
-    result = solve_tsp_glouton(np.array(instance.data), endpoints=None)
+    if args.start is not None:
+        result = solve_tsp_glouton(np.array(instance.data), endpoints=(int(args.start), None))
+    else:
+        result = solve_tsp_glouton(np.array(instance.data), endpoints=None)
     end_time = time.time()
     tour = result[0]
     cost = result[1]
