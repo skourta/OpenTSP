@@ -47,14 +47,14 @@ class TSPInstance:
                         lin.pop(0)
                         temp.append(lin)
                     setattr(self, 'diplay_data', temp)
-        if self.curLine == "NODE_COORD_SECTION":
-            if self['EDGE_WEIGHT_TYPE'] == "GEO":
+        if (self.curLine == "NODE_COORD_SECTION"):
+            if self['EDGE_WEIGHT_TYPE'] == "GEO" or self['EDGE_WEIGHT_TYPE'] == "EUC_2D":
                 coords = []
                 for i in range(int(self['DIMENSION'])):
                     lin = [float(i) for i in self.rawData.readline().split()]
                     coord = (lin[1], lin[2])
                     coords.append(coord)
-                setattr(self, 'diplay_data', coords)
+                setattr(self, 'display_data', coords)
                 data = []
                 for i in range(len(coords)):
                     row = []
@@ -62,7 +62,11 @@ class TSPInstance:
                         if i == j:
                             row.append(float("inf"))
                         else:
-                            row.append(self.geo_dist(coords[i], coords[j]))
+                            # Calculer et ajouter la distance Geo entre les coordonnées
+                            if self['EDGE_WEIGHT_TYPE'] == "GEO":
+                                row.append(self.geo_dist(coords[i], coords[j]))
+                            if self['EDGE_WEIGHT_TYPE'] == "EUC_2D":
+                                row.append(self.euc2d_dist(coords[i], coords[j]))
                     data.append(row)
                 setattr(self, 'data', data)
 
@@ -77,4 +81,7 @@ class TSPInstance:
         a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         return RRR * c
+
+    def euc2d_dist(self, i, j):
+        return round(((i[0] - j[0]) ** 2 + (i[1] - j[1]) ** 2) ** 0.5)
 

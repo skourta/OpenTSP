@@ -1,4 +1,7 @@
 import numpy as np
+import Parser
+import argparse
+import time
 
 
 def reduce_matrix(data):
@@ -103,3 +106,23 @@ def branchNbound(start, data):
     summ += data[visited[len(visited) - 1], start]
     # print(active)
     return visited, summ
+
+
+def run():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("instance")
+    args = parser.parse_args()
+    instance = Parser.TSPInstance(args.instance)
+    instance.readData()
+    # print(pd.DataFrame(data=instance.data))
+    start_time = time.time()
+    tour, cost = branchNbound(0, np.array(instance.data))
+    end_time = time.time()
+    print(tour)
+    print(cost)
+    print(end_time - start_time)
+    return tour, cost, end_time - start_time
+
+
+if __name__ == "__main__":
+    run()
