@@ -270,7 +270,7 @@ if __name__ == '__main__':
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     probaMutation = None
-    if args.probaMutation != "None" and args.probaMutation != None:
+    if args.probaMutation != "None" and args.probaMutation is not None:
         probaMutation = float(args.probaMutation)
     start_time = time.time()
     tour, cost = geneticAlgorithm(np.array(instance.data), population_size=int(args.population_size),
