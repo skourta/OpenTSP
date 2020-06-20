@@ -5,12 +5,9 @@ import pandas as pd
 import AC as AC
 import random
 
-
-
-
-# instance = Parser.TSPInstance('datasets/rl1889.tsp')
-# instance.readData()
-# print(pd.DataFrame(data=instance.data))
+instance = Parser.TSPInstance('datasets/burma14.tsp')
+instance.readData()
+print(pd.DataFrame(data=instance.data))
 testData1 = np.array([
     [np.inf, 27, 43, 16, 30, 26],
     [7, np.inf, 16, 1, 30, 25],
@@ -29,12 +26,29 @@ testData1 = np.array([
 # acs.plot()
 
 # print(instance['DIMENSION'])
-# data = np.array(instance.data)
-# route = [ 0 , 9 , 8 ,10 , 7 ,12 , 6 ,11 , 5 , 4 , 3,  2, 13,  1,0]
+# data = np.array(instance.data).astype(int)
+# route = [7,
+#          13,
+#          8,
+#          11,
+#          9,
+#          10,
+#          1,
+#          2,
+#          14,
+#          3,
+#          4,
+#          5,
+#          6,
+#          12,
+#          7]
 # print(len(route))
 # summ = 0
 # for i in range(0, len(route) - 1, 1):
-#     print(route[i], route[i + 1])
-#     summ += data[route[i] , route[i + 1] ]
+#     # print(route[i]-1, route[i + 1]-1)
+#     print(route[i] - 1, route[i + 1] - 1)
+#     summ += data[route[i] - 1, route[i + 1] - 1]
 # print(summ)
+#
 
+print(float("None"))
