@@ -5,6 +5,7 @@ import Parser
 import time
 import copy
 
+
 def generate_first_solution(graphe, v_depart=None):
     # Faire une copie du graphe vu qu'il va subir a des modification
     _graphe = graphe.copy()
@@ -113,16 +114,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
     parser.add_argument("--iterations",
-                        help="Number of Iterations", )
+                        help="Number of Iterations", default=1000)
     parser.add_argument("--size",
-                        help="Size of Tabu List", )
+                        help="Size of Tabu List", default=20)
     parser.add_argument("--start",
                         help="Starting Node", default=0)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
-    tour, cost = tabu_search(np.array(instance.data), iters=int(args.iterations), size=int(args.size), start_node=int(args.start))
+    tour, cost = tabu_search(np.array(instance.data), iters=int(args.iterations), size=int(args.size),
+                             start_node=int(args.start))
     end_time = time.time()
     print(tour)
     print(cost)
