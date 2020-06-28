@@ -1,3 +1,4 @@
+# OrTools by google usage provided by Smail KOURTA, refactored into a command line program by Smail KOURTA
 """Simple travelling salesman problem between cities."""
 from __future__ import print_function
 from ortools.constraint_solver import routing_enums_pb2
@@ -5,7 +6,6 @@ from ortools.constraint_solver import pywrapcp
 import Parser
 import argparse
 import time
-
 
 
 def create_data_model(instance):
@@ -29,7 +29,8 @@ def print_solution(manager, routing, solution):
         plan_output += '{} '.format(manager.IndexToNode(index))
         previous_index = index
         index = solution.Value(routing.NextVar(index))
-        route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
+        route_distance += routing.GetArcCostForVehicle(
+            previous_index, index, 0)
     plan_output += ' ]'
     print(plan_output)
     print('{}'.format(solution.ObjectiveValue()))
@@ -47,7 +48,6 @@ def main(instance):
 
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
-
 
     def distance_callback(from_index, to_index):
         """Returns the distance between the two nodes."""
@@ -74,6 +74,7 @@ def main(instance):
     if solution:
         print_solution(manager, routing, solution)
         print(end_time - start_time)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

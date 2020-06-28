@@ -1,3 +1,4 @@
+# Tabu Search Implementation provided by BENBELGACEM Rahma Aya, refactored into a command line program by Smail KOURTA
 import numpy as np
 import random
 import argparse
@@ -12,11 +13,13 @@ def generate_first_solution(graphe, v_depart=None):
     # La liste chemin gardera trace de notre parcour
     chemin = []
     # Selection d'un point de depart
-    if v_depart is None: depart = v_depart = np.random.randint(0, len(graphe))
+    if v_depart is None:
+        depart = v_depart = np.random.randint(0, len(graphe))
     depart = v_depart
     chemin.append(v_depart)
     # Creation de l'ensemble des noeuds non visités
-    noeudsNonVisite = set(np.delete(np.arange(0, len(graphe)), v_depart).flatten())
+    noeudsNonVisite = set(
+        np.delete(np.arange(0, len(graphe)), v_depart).flatten())
     # Mise a zero du coup de la solution
     cout = 0
     while (len(noeudsNonVisite) != 0):
@@ -114,17 +117,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
     parser.add_argument("--iterations",
-                        help="Number of Iterations", default=1000)
+                        help="Number of Iterations", )
     parser.add_argument("--size",
-                        help="Size of Tabu List", default=20)
+                        help="Size of Tabu List", )
     parser.add_argument("--start",
                         help="Starting Node", default=0)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
-    tour, cost = tabu_search(np.array(instance.data), iters=int(args.iterations), size=int(args.size),
-                             start_node=int(args.start))
+    tour, cost = tabu_search(np.array(instance.data), iters=int(
+        args.iterations), size=int(args.size), start_node=int(args.start))
     end_time = time.time()
     print(tour)
     print(cost)

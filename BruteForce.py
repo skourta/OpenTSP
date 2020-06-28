@@ -1,3 +1,5 @@
+# B&B Implementation provided by IFERROUDJENE Mouloud, refactored into a command line program by Smail KOURTA
+
 import numpy as np
 import Parser
 import argparse
@@ -53,7 +55,8 @@ def tspBruteForce(graphe, v_depart):
     # Tester et comparer toutes les permutations
     while prochaine_permutation(chemin):
         # Cacule du cout du chemin
-        cout_courant_chemin, courant_chemin = coutChemin(graphe, v_depart, chemin)
+        cout_courant_chemin, courant_chemin = coutChemin(
+            graphe, v_depart, chemin)
 
         # Pour afficher les chemins et leurs cout decommenter cette instruction
         # print(cout_courant_chemin,courant_chemin )

@@ -1,3 +1,4 @@
+# B&B Implementation provided by Smail KOURTA, refactored into a command line program by Smail KOURTA
 import numpy as np
 import Parser
 import argparse
@@ -117,11 +118,11 @@ def run():
     # print(pd.DataFrame(data=instance.data))
     start_time = time.time()
     tour, cost = branchNbound(0, np.array(instance.data))
-    end_time = time.time()
+    end_time = time.time() - start_time
     print(tour)
     print(cost)
-    print(end_time - start_time)
-    return tour, cost, end_time - start_time
+    print(end_time)
+    return tour, cost, end_time
 
 
 if __name__ == "__main__":

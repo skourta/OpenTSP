@@ -1,38 +1,43 @@
+# Hybrid scheme Implementation provided by Omar Tahmi, refactored into a command line program by Smail KOURTA
 import numpy as np
 import Parser
 import argparse
 import time
 import random
 
-#Permuter les aretes entre 2 noeuds.
-def swap_2opt(tour, i, j):
-  tour[i:j+1] = tour[j:i-1:-1]
-  return tour
+# Permuter les aretes entre 2 noeuds.
 
-#Calculer Le cout d'une tournée dans un graphe donné.
+
+def swap_2opt(tour, i, j):
+    tour[i:j+1] = tour[j:i-1:-1]
+    return tour
+
+# Calculer Le cout d'une tournée dans un graphe donné.
+
+
 def coast_of_tour(graphe, tour):
-  return graphe[np.roll(tour, 1), tour].sum()
+    return graphe[np.roll(tour, 1), tour].sum()
+
 
 def solve_tsp_2opt(graphe, initial_tour=None):
-  #Si le param
-  if initial_tour is None : initial_tour = generate_initial_tour(graphe)
-  tour = initial_tour.copy()
-  dimension = len(graphe)
-  final_coast = initial_coast = coast_of_tour(graphe, tour)
-  improved = True
-  while improved:
-      improved = False
-      for i in range(1, dimension - 2):
-          for j in range(i+1, dimension):
-              current_coast = coast_of_tour(graphe, tour)
-              new_coast = coast_of_tour(graphe, swap_2opt(tour[:], i, j))
-              if current_coast > new_coast:
-                  improved = True
-                  swap_2opt(tour, i, j)
-                  final_coast = new_coast
-  return initial_tour, tour, initial_coast, final_coast
-
-
+    # Si le param
+    if initial_tour is None:
+        initial_tour = generate_initial_tour(graphe)
+    tour = initial_tour.copy()
+    dimension = len(graphe)
+    final_coast = initial_coast = coast_of_tour(graphe, tour)
+    improved = True
+    while improved:
+        improved = False
+        for i in range(1, dimension - 2):
+            for j in range(i+1, dimension):
+                current_coast = coast_of_tour(graphe, tour)
+                new_coast = coast_of_tour(graphe, swap_2opt(tour[:], i, j))
+                if current_coast > new_coast:
+                    improved = True
+                    swap_2opt(tour, i, j)
+                    final_coast = new_coast
+    return initial_tour, tour, initial_coast, final_coast
 
 
 class AC:
@@ -47,7 +52,8 @@ class AC:
             self.distance = 0.0
 
         def _select_node(self):
-            unvisited_nodes = [node for node in range(self.num_nodes) if node not in self.tour]
+            unvisited_nodes = [node for node in range(
+                self.num_nodes) if node not in self.tour]
             rowWeights = self.weights[self.tour[-1]][unvisited_nodes]
             rowPheroms = self.pheroms[self.tour[-1]][unvisited_nodes]
             tauIetaI = [(rowPheroms[i] ** self.alpha) * ((1 / rowWeights[i]) ** self.beta) for i in
@@ -68,7 +74,8 @@ class AC:
         def get_distance(self):
             self.distance = 0.0
             for i in range(self.num_nodes):
-                self.distance += self.weights[self.tour[i]][self.tour[(i + 1) % self.num_nodes]]
+                self.distance += self.weights[self.tour[i]
+                                              ][self.tour[(i + 1) % self.num_nodes]]
             return self.distance
 
     def __init__(self, weights, mode='ACS', colony_size=10, elitist_weight=1.0, min_scaling_factor=0.001, alpha=1.0,
@@ -84,19 +91,22 @@ class AC:
         self.num_nodes = weights.shape[0]
         self.nodes = nodes
         self.weights = weights
-        self.pheroms = np.full((weights.shape[0], weights.shape[1]), initial_pheromone)
+        self.pheroms = np.full(
+            (weights.shape[0], weights.shape[1]), initial_pheromone)
         if labels is not None:
             self.labels = labels
         else:
             self.labels = range(1, self.num_nodes + 1)
-        self.ants = [self.Ant(alpha, beta, self.weights, self.pheroms) for _ in range(self.colony_size)]
+        self.ants = [self.Ant(alpha, beta, self.weights, self.pheroms)
+                     for _ in range(self.colony_size)]
         self.global_best_tour = None
         self.global_best_distance = float("inf")
 
     def _add_pheromone(self, tour, distance, weight=1.0):
         pheromone_to_add = self.pheromone_deposit_weight / distance
         for i in range(self.num_nodes):
-            self.pheroms[tour[i]][tour[(i + 1) % self.num_nodes]] += weight * pheromone_to_add
+            self.pheroms[tour[i]][tour[(
+                i + 1) % self.num_nodes]] += weight * pheromone_to_add
 
     def _acs(self):
         for step in range(self.steps):
@@ -128,7 +138,8 @@ class AC:
                                                                                                         self.global_best_tour)
             #########
 
-            self._add_pheromone(self.global_best_tour, self.global_best_distance, weight=self.elitist_weight)
+            self._add_pheromone(
+                self.global_best_tour, self.global_best_distance, weight=self.elitist_weight)
             for i in range(self.num_nodes):
                 for j in range(i + 1, self.num_nodes):
                     self.pheroms[i][j] *= (1.0 - self.rho)
@@ -149,13 +160,15 @@ class AC:
             #########
 
             if float(step + 1) / float(self.steps) <= 0.75:
-                self._add_pheromone(iteration_best_tour, iteration_best_distance)
+                self._add_pheromone(iteration_best_tour,
+                                    iteration_best_distance)
                 max_pheromone = self.pheromone_deposit_weight / iteration_best_distance
             else:
                 if iteration_best_distance < self.global_best_distance:
                     self.global_best_tour = iteration_best_tour
                     self.global_best_distance = iteration_best_distance
-                self._add_pheromone(self.global_best_tour, self.global_best_distance)
+                self._add_pheromone(self.global_best_tour,
+                                    self.global_best_distance)
                 max_pheromone = self.pheromone_deposit_weight / self.global_best_distance
             min_pheromone = max_pheromone * self.min_scaling_factor
             for i in range(self.num_nodes):
@@ -178,7 +191,6 @@ class AC:
         print(self.global_best_tour)
         print(self.global_best_distance)
         print(end_time - start_time)
-
 
 
 if __name__ == "__main__":

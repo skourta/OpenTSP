@@ -1,3 +1,4 @@
+# Hybrid scheme Implementation provided by IFERROUDJENE Mouloud, refactored into a command line program by Smail KOURTA
 import numpy as np
 import pandas as pd
 import Parser

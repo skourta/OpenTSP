@@ -1,3 +1,4 @@
+# Greedy Algorithm Implementation provided by Oussama BENDJABALLAH, refactored into a command line program by Smail KOURTA
 import numpy as np
 import Parser
 import argparse
@@ -21,7 +22,8 @@ def restore_path(connections, endpoints):
     while True:
         next_points = [pnt for pnt in connections[cur_point]
                        if pnt != prev_point]
-        if not next_points: break
+        if not next_points:
+            break
         next_point = next_points[0]
         path.append(next_point)
         prev_point, cur_point = cur_point, next_point
@@ -64,15 +66,18 @@ def path_cost(distance_matrix, path):
 
 def solve_tsp_glouton(distances, endpoints=None):
     N = len(distances)
-    if N == 0: return []
-    if N == 1: return [0]
+    if N == 0:
+        return []
+    if N == 1:
+        return [0]
 
     # State of the TSP solver algorithm.
     node_valency = pyarray('i', [2]) * N
 
     if endpoints is not None:
         start, end = endpoints
-        if start == end: raise ValueError("start=end is not supported")
+        if start == end:
+            raise ValueError("start=end is not supported")
         node_valency[start] = 1
         node_valency[end] = 1
 
@@ -130,16 +135,13 @@ def solve_tsp_glouton(distances, endpoints=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
-    parser.add_argument("--start",
-                        help="Starting Node", )
+    # parser.add_argument("--start",
+    #                     help="Starting Node",)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()
     start_time = time.time()
-    if args.start is not None:
-        result = solve_tsp_glouton(np.array(instance.data), endpoints=(int(args.start), None))
-    else:
-        result = solve_tsp_glouton(np.array(instance.data), endpoints=None)
+    result = solve_tsp_glouton(np.array(instance.data), endpoints=None)
     end_time = time.time()
     tour = result[0]
     cost = result[1]

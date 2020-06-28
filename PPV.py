@@ -1,3 +1,4 @@
+# Nearest Neighbor Implementation provided by Oussama BENDJABALLAH, refactored into a command line program by Smail KOURTA
 import numpy as np
 import Parser
 import argparse
@@ -10,11 +11,13 @@ def PPV(graphe, v_depart=None):
     # La liste chemin gardera trace de notre parcour
     chemin = []
     # Selection d'un point de depart
-    if v_depart is None: depart = v_depart = np.random.randint(0, len(graphe))
+    if v_depart is None:
+        depart = v_depart = np.random.randint(0, len(graphe))
     depart = v_depart
     chemin.append(v_depart)
     # Creation de l'ensemble des noeuds non visités
-    noeudsNonVisite = set(np.delete(np.arange(0, len(graphe)), v_depart).flatten())
+    noeudsNonVisite = set(
+        np.delete(np.arange(0, len(graphe)), v_depart).flatten())
     cout = 0
     while (len(noeudsNonVisite) != 0):
         # Retourner le plus proche voisin
@@ -40,7 +43,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("instance")
     parser.add_argument("--start",
-                        help="Starting Node", )
+                        help="Starting Node",)
     args = parser.parse_args()
     instance = Parser.TSPInstance(args.instance)
     instance.readData()

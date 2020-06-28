@@ -1,3 +1,4 @@
+# 2OPT Implementation provided by Smail KOURTA (started from code by Rochak Gupta [rochakgupta], and tweaked it by adding numpy and using matrices), refactored into a command line program by Smail KOURTA
 import numpy as np
 import random
 import argparse

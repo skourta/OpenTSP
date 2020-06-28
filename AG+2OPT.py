@@ -1,3 +1,4 @@
+# Hybrid scheme Implementation provided by IFERROUDJENE Mouloud, refactored into a command line program by Smail KOURTA
 import numpy as np
 import pandas as pd
 import Parser
@@ -11,11 +12,13 @@ def PPV(graphe, v_depart=None):
     # La liste chemin gardera trace de notre parcour
     chemin = []
     # Selection d'un point de depart
-    if v_depart is None: depart = v_depart = np.random.randint(0, len(graphe))
+    if v_depart is None:
+        depart = v_depart = np.random.randint(0, len(graphe))
     depart = v_depart
     chemin.append(v_depart)
     # Creation de l'ensemble des noeuds non visités
-    noeudsNonVisite = set(np.delete(np.arange(0, len(graphe)), v_depart).flatten())
+    noeudsNonVisite = set(
+        np.delete(np.arange(0, len(graphe)), v_depart).flatten())
     cout = 0
     while (len(noeudsNonVisite) != 0):
         # Retourner le plus proche voisin
@@ -59,7 +62,8 @@ def solve_tsp_2opt(graphe, tours):
             for i in range(1, dimension - 2):
                 for j in range(i + 1, dimension):
                     current_coast = coast_of_tour(graphe, tour)
-                    new_coast = coast_of_tour(graphe, swap_2opt(tour.copy(), i, j))
+                    new_coast = coast_of_tour(
+                        graphe, swap_2opt(tour.copy(), i, j))
                     if current_coast > new_coast:
                         improved = True
                         swap_2opt(tour, i, j)
@@ -127,7 +131,8 @@ def selectParents(evaluated_population, parents_Size, eliteSize=2, Algorithme="R
         for i in range(parents_Size - eliteSize):
             # Selectionner un nombre aleatoire d'individus pour un tournoi
             selectedSize = np.random.randint(2, populationSize)
-            selectedIndice = np.unique(np.random.randint(0, populationSize, selectedSize))
+            selectedIndice = np.unique(
+                np.random.randint(0, populationSize, selectedSize))
             selected_population = evaluated_population[selectedIndice]
             # Prendre le meileure individus de ce trounois
             elite_indice = np.argmin(selected_population[:, 1])
@@ -138,7 +143,8 @@ def selectParents(evaluated_population, parents_Size, eliteSize=2, Algorithme="R
 
     if (Algorithme == "RouletteWheel"):
         # Nous avons mis en place la roue de la roulette en calculant un poids de forme relatif pour chaque individu.
-        df = pd.DataFrame(np.array(sorted_population), columns=["Index", "cout", "Fitness"])
+        df = pd.DataFrame(np.array(sorted_population),
+                          columns=["Index", "cout", "Fitness"])
         # Calcules des somme cumulatives de fitness
         df['cum_sum'] = df.Fitness.cumsum()
         # Cacule
@@ -150,14 +156,16 @@ def selectParents(evaluated_population, parents_Size, eliteSize=2, Algorithme="R
             pick = np.random.uniform(0, 100)
             for i in range(0, len(sorted_population)):
                 if pick <= df.iat[i, 4]:
-                    parents = np.insert(parents, 0, sorted_population[i][:], axis=0)
+                    parents = np.insert(
+                        parents, 0, sorted_population[i][:], axis=0)
                     break
         return parents
 
 
 def inter(lst1, lst2, offset=0):
     # retourne les elements dupliqués de la liste lst2 dans la liste lst1 avec leurs indices
-    lst = [(lst1.index(value) + offset, value) for value in lst1 if value in lst2]
+    lst = [(lst1.index(value) + offset, value)
+           for value in lst1 if value in lst2]
     return lst
 
 
@@ -166,7 +174,8 @@ def croisement(parent1, parent2, nbPointsCroissement):
     fils2 = parent2.tolist()
     # Choisi aleatoirement deux points de découpe
     rng = np.random.default_rng()
-    points = np.sort(rng.choice(len(parent1), size=nbPointsCroissement, replace=False), axis=0).tolist()
+    points = np.sort(rng.choice(
+        len(parent1), size=nbPointsCroissement, replace=False), axis=0).tolist()
     co_points = [0]
     for i in range(len(points)):
         if i % 2 == 0:
@@ -187,9 +196,9 @@ def croisement(parent1, parent2, nbPointsCroissement):
     index1, index2 = [], []
     for i in range(len(points) // 2 + 1):
         for v in s_a2:
-            index1 += inter(fils1[co_points[2 * i]:co_points[2 * i + 1]], v, co_points[2 * i])
+            index1 += inter(fils1[co_points[2 * i]                                  :co_points[2 * i + 1]], v, co_points[2 * i])
         for u in s_a1:
-            index2 += inter(fils2[co_points[2 * i]:co_points[2 * i + 1]], u, co_points[2 * i])
+            index2 += inter(fils2[co_points[2 * i]                                  :co_points[2 * i + 1]], u, co_points[2 * i])
     # Remplir les trous dans chaque parcours
     for i in range(len(index1)):
         fils1[index1[i][0]] = index2[i][1]
@@ -201,7 +210,8 @@ def croisementPopulation(parents, nbPointsCroissement=2):
     fils = []
     random_list = np.random.permutation(len(parents))
     for i in range(0, len(parents) - 1, 2):
-        fils1, filsP2 = croisement(parents[random_list[i], 0], parents[random_list[i + 1], 0], nbPointsCroissement)
+        fils1, filsP2 = croisement(
+            parents[random_list[i], 0], parents[random_list[i + 1], 0], nbPointsCroissement)
         fils.extend((fils1, filsP2))
     return np.array(fils)
 
@@ -259,12 +269,14 @@ def nextGeneration(graphe, population, parents_size, eliteSize, SelectionAlgo, n
     fils = croisementPopulation(parents, nbPointCroisement)
 
     # Mutation
-    mutated_fils = evaluatePopulation(graphe, mutationPopulation(fils, probaMutation))
+    mutated_fils = evaluatePopulation(
+        graphe, mutationPopulation(fils, probaMutation))
     new_population = np.array(np.append(parents, mutated_fils, axis=0))
 
     # Remplacement
     # Modes: Elitiste , Generationnel
-    new_population = remplacement(init_population, new_population, remplacementAlgo)
+    new_population = remplacement(
+        init_population, new_population, remplacementAlgo)
 
     return new_population
 
@@ -320,10 +332,11 @@ if __name__ == '__main__':
         probaMutation = float(args.probaMutation)
     # start_time = time.time()
     tour, cost, total_time = HRH_Ag_2opt(np.array(instance.data), population_size=int(args.population_size),
-                             nbgenerations=int(args.nbgenerations), parents_size=int(args.parents_size),
-                             eliteSize=int(args.eliteSize), genAlgo=args.genAlgo, SelectionAlgo=args.SelectionAlgo,
-                             nbPointCroisement=int(args.nbPointCroisement),
-                             probaMutation=probaMutation, remplacementAlgo=args.remplacementAlgo)
+                                         nbgenerations=int(args.nbgenerations), parents_size=int(args.parents_size),
+                                         eliteSize=int(args.eliteSize), genAlgo=args.genAlgo, SelectionAlgo=args.SelectionAlgo,
+                                         nbPointCroisement=int(
+                                             args.nbPointCroisement),
+                                         probaMutation=probaMutation, remplacementAlgo=args.remplacementAlgo)
     # end_time = time.time()
     print(tour)
     print(cost)
