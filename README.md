@@ -35,7 +35,7 @@ python AC.py --instance=datasets/bays29.tsp --colony_size=100
 | Branch and Bound | KOURTA Smail          |
 | Brute Force      | IFERROUDJENE Mouloud  |
 | Greedy Algorithm | BENDJABALLAH Oussama  |
-| Nearest Neighbor | BENDJABALLAH Oussama  |
+| Nearest Neighbor | TAHMI Omar            |
 | Tabu Search      | BENBELGACEM Rahma Aya |
 | Or-Tools Usage   | KOURTA Smail          |
 | TSPlib Parser    | KOURTA Smail          |
